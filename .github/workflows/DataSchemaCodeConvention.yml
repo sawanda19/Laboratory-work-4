@@ -25,6 +25,8 @@ jobs:
           sqlfluff version
       
       - name: Lint SQL files
-        run: |
-          sqlfluff lint DataSchema.sql --dialect postgres
+  run: |
+    cd .github/workflows
+    sqlfluff lint DataSchema.sql --dialect postgres
+
   
