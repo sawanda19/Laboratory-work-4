@@ -1,4 +1,4 @@
--- Фізична схема реляційної бази даних SportLife-Assistant (PostgreSQL)
+-- Фізична схем реляційної бази даних SportLife-Assistant (PostgreSQL)
 
 CREATE TABLE user_accounts (
     user_email VARCHAR(100) PRIMARY KEY,
