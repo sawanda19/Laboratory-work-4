@@ -1,111 +1,111 @@
 -- Фізична схема реляційної бази даних SportLife-Assistant (PostgreSQL)
 
-CREATE TABLE Users (
+CREATE TABLE users (
     email VARCHAR(100) PRIMARY KEY,
-    пароль VARCHAR(100) NOT NULL CHECK (LENGTH(пароль) >= 8),
-    дата_реєстрації DATE NOT NULL
+    password VARCHAR(100) NOT NULL CHECK (LENGTH(password) >= 8),
+    registration_date DATE NOT NULL
 );
 
-CREATE TABLE Enthusiasts (
+CREATE TABLE enthusiasts (
     id SERIAL PRIMARY KEY,
-    ім_я VARCHAR(50) NOT NULL,
-    вік INT CHECK (вік > 0),
-    улюблені_види_спорту TEXT,
-    email VARCHAR(100) REFERENCES Users(email)
+    name VARCHAR(50) NOT NULL,
+    age INT CHECK (age > 0),
+    favorite_sports TEXT,
+    user_email VARCHAR(100) REFERENCES users(email) ON DELETE CASCADE
 );
 
-CREATE TABLE SportTypes (
+CREATE TABLE sport_types (
     id SERIAL PRIMARY KEY,
-    назва VARCHAR(100) UNIQUE,
-    категорія VARCHAR(50),
-    популярність INT CHECK (популярність BETWEEN 1 AND 100)
+    name VARCHAR(100) UNIQUE NOT NULL,
+    category VARCHAR(50),
+    popularity INT CHECK (popularity BETWEEN 1 AND 100)
 );
 
-CREATE TABLE SportRules (
+CREATE TABLE sport_rules (
     id SERIAL PRIMARY KEY,
-    текст_пояснення TEXT NOT NULL,
-    рівень_складності VARCHAR(20) CHECK (рівень_складності IN ('легкий','середній','складний')),
-    дата_оновлення DATE,
-    sport_type_id INT REFERENCES SportTypes(id)
+    description TEXT NOT NULL,
+    difficulty_level VARCHAR(20) CHECK (difficulty_level IN ('легкий','середній','складний')),
+    updated_at DATE,
+    sport_type_id INT REFERENCES sport_types(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Illustrations (
+CREATE TABLE illustrations (
     id SERIAL PRIMARY KEY,
-    URL VARCHAR(255) CHECK (URL ~* '^https?://'),
-    тип VARCHAR(50),
-    опис TEXT,
-    rule_id INT REFERENCES SportRules(id)
+    url VARCHAR(255) CHECK (url ~* '^https?://'),
+    type VARCHAR(50),
+    description TEXT,
+    rule_id INT REFERENCES sport_rules(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Addresses (
+CREATE TABLE addresses (
     id SERIAL PRIMARY KEY,
-    місто VARCHAR(50) NOT NULL,
-    вулиця VARCHAR(50) NOT NULL,
-    будинок VARCHAR(10),
-    квартира VARCHAR(10),
-    підїзд INT,
-    поверх INT,
-    user_id INT REFERENCES Enthusiasts(id)
+    city VARCHAR(50) NOT NULL,
+    street VARCHAR(50) NOT NULL,
+    building VARCHAR(10),
+    apartment VARCHAR(10),
+    entrance INT,
+    floor INT,
+    user_id INT REFERENCES enthusiasts(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Suppliers (
+CREATE TABLE suppliers (
     id SERIAL PRIMARY KEY,
-    назва VARCHAR(100) UNIQUE,
-    рейтинг FLOAT CHECK (рейтинг BETWEEN 0 AND 5),
-    контактна_інформація VARCHAR(100) CHECK (контактна_інформація ~* '^[A-Za-z0-9@._+-]+$'),
-    час_доставки VARCHAR(50)
+    name VARCHAR(100) UNIQUE NOT NULL,
+    rating FLOAT CHECK (rating BETWEEN 0 AND 5),
+    contact_info VARCHAR(100),
+    delivery_time VARCHAR(50)
 );
 
-CREATE TABLE WaterTypes (
+CREATE TABLE water_types (
     id SERIAL PRIMARY KEY,
-    назва VARCHAR(50) UNIQUE,
-    опис TEXT,
-    категорія VARCHAR(50),
-    supplier_id INT REFERENCES Suppliers(id)
+    name VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    category VARCHAR(50),
+    supplier_id INT REFERENCES suppliers(id) ON DELETE SET NULL
 );
 
-CREATE TABLE WaterVolumes (
+CREATE TABLE water_volumes (
     id SERIAL PRIMARY KEY,
-    значення FLOAT CHECK (значення > 0),
-    одиниця_виміру VARCHAR(10) CHECK (одиниця_виміру IN ('л','мл'))
+    value FLOAT CHECK (value > 0),
+    unit VARCHAR(10) CHECK (unit IN ('л','мл'))
 );
 
-CREATE TABLE WaterOrders (
-    номер_замовлення VARCHAR(50) PRIMARY KEY,
-    дата_замовлення DATE,
-    час_доставки VARCHAR(20),
-    кількість INT CHECK (кількість > 0),
-    загальна_сума FLOAT CHECK (загальна_сума > 0),
-    статус VARCHAR(50),
-    user_id INT REFERENCES Enthusiasts(id),
-    address_id INT REFERENCES Addresses(id),
-    water_type_id INT REFERENCES WaterTypes(id),
-    volume_id INT REFERENCES WaterVolumes(id),
-    supplier_id INT REFERENCES Suppliers(id)
+CREATE TABLE water_orders (
+    order_number VARCHAR(50) PRIMARY KEY,
+    order_date DATE,
+    delivery_time VARCHAR(20),
+    quantity INT CHECK (quantity > 0),
+    total_amount FLOAT CHECK (total_amount > 0),
+    status VARCHAR(50),
+    user_id INT REFERENCES enthusiasts(id) ON DELETE CASCADE,
+    address_id INT REFERENCES addresses(id) ON DELETE CASCADE,
+    water_type_id INT REFERENCES water_types(id) ON DELETE SET NULL,
+    volume_id INT REFERENCES water_volumes(id) ON DELETE SET NULL,
+    supplier_id INT REFERENCES suppliers(id) ON DELETE SET NULL
 );
 
-CREATE TABLE SportEvents (
+CREATE TABLE sport_events (
     id SERIAL PRIMARY KEY,
-    назва VARCHAR(100) NOT NULL,
-    дата_початку DATE,
-    місце_проведення VARCHAR(100),
-    статус VARCHAR(30)
+    name VARCHAR(100) NOT NULL,
+    start_date DATE,
+    location VARCHAR(100),
+    status VARCHAR(30)
 );
 
-CREATE TABLE ChatRooms (
+CREATE TABLE chat_rooms (
     id SERIAL PRIMARY KEY,
-    назва VARCHAR(100) UNIQUE,
-    кількість_учасників INT DEFAULT 0,
-    дата_створення DATE,
-    активна BOOLEAN DEFAULT TRUE,
-    event_id INT REFERENCES SportEvents(id)
+    name VARCHAR(100) UNIQUE NOT NULL,
+    participant_count INT DEFAULT 0,
+    creation_date DATE DEFAULT CURRENT_DATE,
+    active BOOLEAN DEFAULT TRUE,
+    event_id INT REFERENCES sport_events(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Messages (
+CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
-    текст TEXT NOT NULL,
-    час_відправки TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    прочитано BOOLEAN DEFAULT FALSE,
-    user_id INT REFERENCES Enthusiasts(id),
-    chat_id INT REFERENCES ChatRooms(id)
+    text TEXT NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE,
+    user_id INT REFERENCES enthusiasts(id) ON DELETE CASCADE,
+    chat_id INT REFERENCES chat_rooms(id) ON DELETE CASCADE
 );
