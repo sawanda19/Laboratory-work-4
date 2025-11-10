@@ -1,0 +1,19 @@
+name: Program Code Linter
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  javascript-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install BiomeJS
+        run: npm install --global @biomejs/biome
+
+      - name: Run Linter for JS files
+        run: biome check ProgramCode.js
