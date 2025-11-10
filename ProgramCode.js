@@ -1,4 +1,4 @@
-// ProgramCode.js 
+// ProgramCode.js
 function showProductName() {
 	console.log("SportLife-Assistant");
 }
