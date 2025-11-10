@@ -25,7 +25,13 @@ jobs:
           sqlfluff version
       
       - name: Lint SQL files
-  run: |
-     sqlfluff lint .github/workflows/DataSchema.sql --dialect postgres
+        run: |
+          if [ -f "DataSchema.sql" ]; then
+            echo "File found: DataSchema.sql"
+            sqlfluff lint DataSchema.sql --dialect postgres
+          else
+            echo "ERROR: DataSchema.sql not found!"
+            exit 1
+          fi
 
   
