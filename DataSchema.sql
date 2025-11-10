@@ -113,7 +113,7 @@ CREATE TABLE sport_events (
     event_id SERIAL PRIMARY KEY,
     event_name VARCHAR(100) NOT NULL,
     start_date DATE,
-    location VARCHAR(100),
+    place VARCHAR(100),
     status VARCHAR(30)
 );
 
