@@ -3,7 +3,7 @@
 CREATE TABLE user_accounts (
     user_email VARCHAR(100) PRIMARY KEY,
     user_password VARCHAR(100) NOT NULL
-        CHECK (LENGTH(user_password) >= 8),
+CHECK (LENGTH(user_password) >= 8),
     registration_date DATE NOT NULL
 );
 
@@ -13,8 +13,8 @@ CREATE TABLE enthusiasts (
     age INT CHECK (age > 0),
     favorite_sports TEXT,
     user_email VARCHAR(100)
-        REFERENCES user_accounts (user_email)
-        ON DELETE CASCADE
+REFERENCES user_accounts (user_email)
+ON DELETE CASCADE
 );
 
 CREATE TABLE sport_types (
@@ -22,7 +22,7 @@ CREATE TABLE sport_types (
     sport_name VARCHAR(100) UNIQUE NOT NULL,
     category VARCHAR(50),
     popularity INT
-        CHECK (popularity BETWEEN 1 AND 100)
+CHECK (popularity BETWEEN 1 AND 100)
 );
 
 CREATE TABLE sport_rules (
