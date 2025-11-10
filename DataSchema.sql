@@ -13,8 +13,8 @@ CREATE TABLE enthusiasts (
     age INT CHECK (age > 0),
     favorite_sports TEXT,
     user_email VARCHAR(100)
-     REFERENCES user_accounts (user_email)
-     ON DELETE CASCADE
+    REFERENCES user_accounts (user_email)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE sport_types (
